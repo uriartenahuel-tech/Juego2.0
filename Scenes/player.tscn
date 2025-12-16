@@ -1,3 +1,35 @@
-[gd_scene format=3 uid="uid://byn0xc6dcaan8"]
+[gd_scene load_steps=5 format=3 uid="uid://byn0xc6dcaan8"]
 
-[node name="Player" type="Node2D"]
+[ext_resource type="Script" uid="uid://b2bkukc585ev" path="res://Scripts/player/StateMachine/state_machine.gd" id="1_vgqql"]
+[ext_resource type="Script" uid="uid://v4kq2w220vux" path="res://Scripts/player/StateMachine/idle.gd" id="2_fkybt"]
+[ext_resource type="Script" uid="uid://dhu756dpjr0jp" path="res://Scripts/player/StateMachine/attack.gd" id="3_x3wgy"]
+[ext_resource type="Script" uid="uid://brlpq2gfuicj3" path="res://Scripts/player/StateMachine/walk.gd" id="4_3smsa"]
+
+[node name="Player" type="CharacterBody2D"]
+position = Vector2(2, 1)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+
+[node name="Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("1_vgqql")
+
+[node name="idle" type="Node" parent="StateMachine"]
+script = ExtResource("2_fkybt")
+
+[node name="attack" type="Node" parent="StateMachine"]
+script = ExtResource("3_x3wgy")
+
+[node name="walk" type="Node" parent="StateMachine"]
+script = ExtResource("4_3smsa")
+
+[node name="Movement" type="Node" parent="."]
+
+[node name="Combat" type="Node" parent="."]
+
+[node name="Stats" type="Node" parent="."]
