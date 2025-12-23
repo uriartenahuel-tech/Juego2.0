@@ -1,10 +1,11 @@
-[gd_scene load_steps=22 format=3 uid="uid://byn0xc6dcaan8"]
+[gd_scene load_steps=20 format=3 uid="uid://byn0xc6dcaan8"]
 
 [ext_resource type="Script" uid="uid://b2bkukc585ev" path="res://Scripts/player/StateMachine/state_machine.gd" id="1_vgqql"]
-[ext_resource type="Script" uid="uid://di5bqxvqaq8h" path="res://Scripts/player/player.gd" id="1_x3wgy"]
+[ext_resource type="Script" uid="uid://v4kq2w220vux" path="res://Scripts/player/StateMachine/idle.gd" id="2_fkybt"]
 [ext_resource type="Texture2D" uid="uid://bjm325mdss543" path="res://herochar_idle_anim_strip_4.png" id="2_x3wgy"]
 [ext_resource type="Texture2D" uid="uid://bufnsu4l0d3nk" path="res://herochar_run_anim_strip_6.png" id="3_3smsa"]
-[ext_resource type="Texture2D" uid="uid://ckm4faxcuoc6i" path="res://herochar_jump_up_anim_strip_3.png" id="3_fkybt"]
+[ext_resource type="Script" uid="uid://dhu756dpjr0jp" path="res://Scripts/player/StateMachine/attack.gd" id="3_x3wgy"]
+[ext_resource type="Script" uid="uid://brlpq2gfuicj3" path="res://Scripts/player/StateMachine/walk.gd" id="4_3smsa"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3smsa"]
 atlas = ExtResource("2_x3wgy")
@@ -21,18 +22,6 @@ region = Rect2(32, 0, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_tx1dd"]
 atlas = ExtResource("2_x3wgy")
 region = Rect2(48, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_x3wgy"]
-atlas = ExtResource("3_fkybt")
-region = Rect2(0, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qqcod"]
-atlas = ExtResource("3_fkybt")
-region = Rect2(16, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_igrcy"]
-atlas = ExtResource("3_fkybt")
-region = Rect2(32, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gymyn"]
 atlas = ExtResource("3_3smsa")
@@ -79,20 +68,6 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_x3wgy")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qqcod")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_igrcy")
-}],
-"loop": true,
-"name": &"jump",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_gymyn")
 }, {
 "duration": 1.0,
@@ -125,12 +100,12 @@ height = 16.0
 
 [node name="Player" type="CharacterBody2D"]
 position = Vector2(2, 1)
-script = ExtResource("1_x3wgy")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(5, -5)
 sprite_frames = SubResource("SpriteFrames_gymyn")
-animation = &"jump"
+animation = &"walk"
+frame_progress = 0.14691874
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(5, -5)
@@ -142,9 +117,20 @@ shape = SubResource("CapsuleShape2D_3smsa")
 position = Vector2(5, -5)
 shape = SubResource("CapsuleShape2D_8erm5")
 
-[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("player")]
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("1_vgqql")
-player = NodePath("..")
+initial_state = NodePath("idle")
+
+[node name="idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("animation")]
+script = ExtResource("2_fkybt")
+animation = NodePath("../../AnimatedSprite2D")
+
+[node name="attack" type="Node" parent="StateMachine"]
+script = ExtResource("3_x3wgy")
+
+[node name="walk" type="Node" parent="StateMachine" node_paths=PackedStringArray("animation")]
+script = ExtResource("4_3smsa")
+animation = NodePath("../../AnimatedSprite2D")
 
 [node name="Movement" type="Node" parent="."]
 
@@ -153,5 +139,4 @@ player = NodePath("..")
 [node name="Stats" type="Node" parent="."]
 
 [node name="Camera2D" type="Camera2D" parent="."]
-scale = Vector2(0.73011035, 0.7312818)
-zoom = Vector2(4, 4)
+zoom = Vector2(3, 3)

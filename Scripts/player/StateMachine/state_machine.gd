@@ -1,19 +1,57 @@
 extends Node
 
-@export var initial_state: Node
-var current_state: Node
-var state_machine
+@export var player: Player
 
-func _ready():
-	current_state = initial_state
-	current_state.state_machine = self
-	current_state.enter()
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
 
-func _physics_process(delta):
-	current_state.physics_update(delta)
 
-func change_state(new_state: Node):
-	current_state.exit()
-	current_state = new_state
-	current_state.state_machine = self
-	current_state.enter()
+
+enum STATE {
+	IDLE,
+	WALK,
+	ATTACK,
+	JUMP,
+	DEATH,
+	HURT
+}
+
+var current_state :STATE = STATE.IDLE
+
+func _process(_delta):
+	var moving := Input.is_action_pressed("left") or Input.is_action_pressed("right")
+	var attack:= Input.is_action_just_pressed("attack")
+	var jump := Input.is_action_just_pressed("jump")
+	match current_state:
+		STATE.IDLE:
+			player.velocity.x=0
+			player.play_animation("idle")
+			if moving:
+				current_state=STATE.WALK
+			elif attack:
+				current_state=STATE.ATTACK
+			elif jump:
+				current_state=STATE.JUMP
+			pass
+		STATE.WALK:
+			player.play_animation("walk")
+			if !moving:
+				current_state=STATE.IDLE
+			elif attack:
+				current_state=STATE.ATTACK
+			elif jump:
+				current_state=STATE.JUMP
+			pass
+		STATE.ATTACK:
+			player.play_animation("attack")
+			if player.current_animation() == "attack" and player.is_animation_finished():
+				current_state = STATE.WALK if moving else STATE.IDLE
+			pass
+		STATE.JUMP:
+			player.play_animation("jump")
+			if player.current_animation() == "jump" and player.is_animation_finished():
+				current_state = STATE.WALK if moving else STATE.IDLE
+			pass
+		STATE.HURT:
+			pass
